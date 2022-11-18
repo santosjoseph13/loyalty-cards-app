@@ -40,16 +40,18 @@ provider:
 
 
   # resourcePolicy:
-  #   - Effect: Allow
+  #   - Effect: Deny
   #     Principal: '*'
   #     Action: execute-api:Invoke
   #     Resource:
-  #       - execute-api:/*/*/topup
-  #       - execute-api:/*/*/transactions
-  #       - execute-api:/*/*/balance
+  #       - execute-api:/*/*/cards
+  #       - execute-api:/*/*/cards/*
+  #       - execute-api:/*/*/loyalty-cards
+  #       - execute-api:/*/*/loyalty-cards/*
   #     Condition:
-  #       IpAddress:
+  #       NotIpAddress:
   #         aws:SourceIp: ${file(${self:custom.stage}-resource-ip.yml)}
+          
 functions:
   - ${file(./src/functions/loyaltycard.yml)}
   - loyalty-card-get-all:
