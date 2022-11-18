@@ -1,0 +1,26 @@
+{
+  "name": "loyalty-cards-app",
+  "version": "1.0.0",
+  "description": "loyalty-cards-app",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint ./src/*",
+    "lint:fix": "eslint --fix ./src/*",
+    "test": "semistandard --fix",
+    "clean": "rm -rf ./build/",
+    "deploy:dev": "npm run build && sls deploy -v --stage dev",
+    "deploy:prod": "npm run build && sls deploy -v --stage production",
+    "build": "babel ./src/ --out-dir ./build/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files"
+  },
+  "author": "Joseph Santos",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-ssm": "^3.212.0",
+    "aws-sdk": "^2.1256.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.1",
+    "serverless-prune-plugin": "^2.0.1"
+  }
+}

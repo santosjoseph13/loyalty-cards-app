@@ -1,0 +1,10 @@
+ loyalty-cards:
+    timeout: 30
+    handler: 'build.loyaltyCardsHandler'
+    events:
+      - http:
+          path: cards/{card_number}
+          method: ANY
+      - http:
+          path: cards
+          method: ANY

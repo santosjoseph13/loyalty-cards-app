@@ -1,0 +1,13 @@
+.serverless/
+node_modules
+test/
+package-lock.json
+build/
+local/
+
+*production*.yml
+*prod*.yml
+test-*
+test-otp.json
+env.*.yml
+*-resource-ip.yml

@@ -1,0 +1,79 @@
+service: loyalty-cards-app
+variablesResolutionMode: 20210326
+
+custom:
+  prune:
+    automatic: true
+    number: 5
+
+plugins:
+  - serverless-prune-plugin
+
+provider:
+  name: aws
+  stage : ${opt:stage, 'dev'}
+  runtime: nodejs14.x
+  region: ${opt:region, 'ap-southeast-1'}
+  endpointType: regional
+  environment: ${file(./src/helper/ssmHelper.js)}
+  memorySize: 256
+
+  tags:
+    project: ecv
+    service: loyalty-cards-app
+  stackTags:
+    project: ecv
+    service: loyalty-cards-app
+  
+  # vpc: 
+  #   securityGroupIds: 
+  #     - ${self:provider.environment.SECURITY_GROUP_ID}
+  #   subnetIds:
+  #     - ${self:provider.environment.SUBNET_ONE}
+  #     - ${self:provider.environment.SUBNET_TWO}
+      
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:874957933250:table/${self:provider.environment.LOYALTY_TABLE}"
+
+
+  # resourcePolicy:
+  #   - Effect: Allow
+  #     Principal: '*'
+  #     Action: execute-api:Invoke
+  #     Resource:
+  #       - execute-api:/*/*/topup
+  #       - execute-api:/*/*/transactions
+  #       - execute-api:/*/*/balance
+  #     Condition:
+  #       IpAddress:
+  #         aws:SourceIp: ${file(${self:custom.stage}-resource-ip.yml)}
+functions:
+  - ${file(./src/functions/loyaltycard.yml)}
+  - loyalty-card-get-all:
+      timeout: 30
+      handler: 'build.getCardsHandler'
+      events:
+        - http:
+            path: loyalty-cards
+            method: GET
+  - loyalty-card-get:
+      timeout: 30
+      handler: 'build.getCardHandler'
+      events:
+        - http:
+            path: loyalty-cards/{card_number}
+            method: GET
+  - loyalty-card-create:
+      timeout: 30
+      handler: 'build.createCardHandler'
+      events:
+        - http:
+            path: loyalty-cards
+            method: POST
+
+package:
+  exclude:
+    - node_modules/aws-sdk/**
